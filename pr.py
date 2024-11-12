@@ -1,9 +1,6 @@
-import argparse
-import re
-import os
-import json
-import yaml
-import xml.etree.ElementTree as ET
+import os # Для получения путей к файлам
+import re # Для регулярных выражений
+import xml.etree.ElementTree as ET # Для обработки и создания XML-документов
 
 def evaluate_expression(match):
     expression = match.group(0)
@@ -14,73 +11,67 @@ def evaluate_expression(match):
         print(f"Ошибка при вычислении выражения '{expression}': {e}")
         return expression
 
-def process_file(input_file, output_file, file_type):
-    try:
-        if not os.path.isfile(input_file):
-            print(f"Ошибка: файл '{input_file}' не найден.")
+def process_file(input_file, output_file):
+    # Определяем тип файла по расширению
+    _, file_extension = os.path.splitext(input_file)
+    file_extension = file_extension.lower()
+
+    if file_extension == '.txt':
+        with open(input_file, 'r') as file:
+            content = file.read()
+        processed_content = re.sub(r'\b[\d+\-*/\s]+\b', evaluate_expression, content)
+        with open(output_file, 'w') as file:
+            file.write(processed_content)
+        print(f"Обработка текстового файла завершена. Результаты записаны в '{output_file}'.")
+
+    elif file_extension == '.xml':
+        with open(input_file, 'r', encoding='utf-8') as file:
+            content = file.read()
+
+        try:
+            tree = ET.fromstring(content)
+        except ET.ParseError as e:
+            print(f"Ошибка парсинга XML: {e}")
             return
 
-        if file_type == 'txt':
-            with open(input_file, 'r') as file:
-                content = file.read()
-            processed_content = re.sub(r'\b[\d+\-*/\s]+\b', evaluate_expression, content)
-            with open(output_file, 'w') as file:
-                file.write(processed_content)
+        process_xml(tree)
+        processed_content = ET.tostring(tree, encoding='unicode')
+        with open(output_file, 'w', encoding='utf-8') as file:
+            file.write(processed_content)
+        print(f"Обработка XML файла завершена. Результаты записаны в '{output_file}'.")
 
-        elif file_type == 'json':
-            with open(input_file, 'r') as file:
-                content = json.load(file)
-            processed_content = process_json_yaml(content)
-            with open(output_file, 'w') as file:
-                json.dump(processed_content, file, ensure_ascii=False, indent=4)
-
-        elif file_type == 'yaml':
-            with open(input_file, 'r') as file:
-                content = yaml.safe_load(file)
-            processed_content = process_json_yaml(content)
-            with open(output_file, 'w') as file:
-                yaml.dump(processed_content, file, allow_unicode=True)
-
-        elif file_type == 'xml':
-            tree = ET.parse(input_file)
-            root = tree.getroot()
-            process_xml(root)
-            tree.write(output_file, encoding='utf-8', xml_declaration=True)
-
-        print(f"Обработка завершена. Результаты записаны в файл '{output_file}'.")
-
-    except Exception as e:
-        print(f"Ошибка при обработке файла: {e}")
-
-def process_json_yaml(data):
-    if isinstance(data, dict):
-        return {k: process_json_yaml(v) for k, v in data.items()}
-    elif isinstance(data, list):
-        return [process_json_yaml(item) for item in data]
-    elif isinstance(data, str):
-        return re.sub(r'\b[\d+\-*/\s]+\b', evaluate_expression, data)
-    return data
+    else:
+        print("Ошибка: неподдерживаемый тип файла. Пожалуйста, используйте .txt или .xml.")
 
 def process_xml(element):
     if element.text:
         element.text = re.sub(r'\b[\d+\-*/\s]+\b', evaluate_expression, element.text)
+
     for child in element:
         process_xml(child)
-
-
+        if child.tail:
+            child.tail = re.sub(r'\b[\d+\-*/\s]+\b', evaluate_expression, child.tail)
 
 def main():
-    parser = argparse.ArgumentParser(description="Приложение для замены арифметических выражений на результаты.")
-    parser.add_argument('input_file', type=str, help='Путь к входному файлу')
-    parser.add_argument('output_file', type=str, help='Путь к выходному файлу')
-    args = parser.parse_args()
+    file_type = input("Введите тип входного файла (txt/xml/json/yaml): ").strip().lower()
 
-    file_type = input("Введите тип входного файла (txt, xml, json, yaml): ").strip().lower()
-    if file_type not in ['txt', 'xml', 'json', 'yaml']:
-        print("Ошибка: недопустимый тип файла. Пожалуйста, введите один из следующих: txt, xml, json, yaml.")
+    if file_type == 'txt':
+        input_file = 'input.txt'
+        output_file = 'output.txt'
+    elif file_type == 'xml':
+        input_file = 'input.xml'
+        output_file = 'output.xml'
+    elif file_type == 'json':
+        input_file = 'input.json'
+        output_file = 'output.json'
+    elif file_type == 'yaml':
+        input_file = 'input.yaml'
+        output_file = 'output.yaml'
+    else:
+        print("Ошибка: неподдерживаемый тип файла. Пожалуйста, используйте 'txt' или 'xml'.")
         return
 
-    process_file(args.input_file, args.output_file, file_type)
+    process_file(input_file, output_file)
 
 if __name__ == "__main__":
     main()
