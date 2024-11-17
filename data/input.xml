@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<calculations>
+    <expression>5 + 3</expression>
+    <expression>3 + 4 * (2 - 1) + 5 / 5</expression>
+    <final>20 / 4</final>
+</calculations>

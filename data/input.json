@@ -1,0 +1,6 @@
+{
+    "expression1": "3 + 5",
+    "expression2": "10 - 2 * 3",
+    "expression3": "(1 + 2) * (3 + 4)",
+    "expression4": "15 / (1 + 2)"
+}
