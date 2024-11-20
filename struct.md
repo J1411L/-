@@ -3,6 +3,7 @@
     ├── .venv/                # Виртуальное окружение 
     ├── mod/                  # Исходный код
     │   ├── __init__.py       # Указывает, что это пакет
+    │   ├── expression_evaluator.py
     │   ├── txt_processor.py
     │   ├── xml_processor.py
     │   ├── json_processor.py
