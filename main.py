@@ -1,5 +1,5 @@
-from tkinter import * # Библиотека для создания графического интерфейса.
-from tkinter import messagebox # Модуль Tkinter для отображения сообщений об ошибках и уведомлениях.
+from tkinter import *
+from tkinter import messagebox
 from mod.txt_processor import process_txt_file
 from mod.xml_processor import process_xml_file
 from mod.json_processor import process_json_file
@@ -7,39 +7,44 @@ from mod.yaml_processor import process_yaml_file
 import os
 
 class FileProcessorApp:
-    # Это основной класс приложения, который инициализирует графический интерфейс.
     def __init__(self, root):
-    # Метод инициализации, который устанавливает заголовок окна
         self.root = root
         self.root.title("Обработка файлов")
+        self.root.configure(bg="#FDF4E3")
 
-        self.label_file_type = Label(root, text="Введите тип входного файла (txt/xml/json/yaml):")
-        self.label_file_type.pack()
+        self.label_file_type = Label(root, text="Введите тип входного файла (txt/xml/json/yaml):",
+                                     font=("Calibri", 12, "bold"), fg="#503D33", bg="#FDF4E3")
+        self.label_file_type.pack(pady=10)
 
-        self.entry_file_type = Entry(root, width=20)
-        self.entry_file_type.pack()
-        '''Label: Надпись для ввода типа файла.
-           Entry: Поле ввода'''
+        self.entry_file_type = Entry(root, width=20, font=("Calibri", 12))
+        self.entry_file_type.pack(pady=5)
 
-        self.label_method = Label(root, text="Выберите метод обработки:")
-        self.label_method.pack()
+        self.label_method = Label(root, text="Выберите метод обработки:",
+                                     font=("Calibri", 12, "bold"), bg="#FDF4E3", fg="#503D33")
+        self.label_method.pack(pady=10)
 
-        self.method_var = IntVar() # Переменная для хранения значения выбранного метода.
-        self.method_var.set(1)  # Установка метода по умолчанию
+        self.method_var = IntVar()
+        self.method_var.set(1)
 
-        # Кнопки для выбора одного из методов обработки
-        self.radio1 = Radiobutton(root, text="1. Регулярные выражения", variable=self.method_var, value=1)
-        self.radio1.pack()
+        self.radio1 = Radiobutton(root, text="1. Регулярные выражения", variable=self.method_var, value=1,
+                                  font=("Calibri", 12), indicatoron=0, width=30, relief=FLAT, bg="#F5E6CB",
+                                  activebackground="#E7C697", fg="#503D33")
+        self.radio1.pack(pady=5)
 
-        self.radio2 = Radiobutton(root, text="2. Парсинг", variable=self.method_var, value=2)
-        self.radio2.pack()
+        self.radio2 = Radiobutton(root, text="2. Парсинг", variable=self.method_var, value=2, font=("Calibri", 12),
+                                  indicatoron=0, width=30, relief=FLAT, bg="#F5E6CB", activebackground="#E7C697",
+                                  fg="#503D33")
+        self.radio2.pack(pady=5)
 
-        self.radio3 = Radiobutton(root, text="3. Математическая библиотека (eval)", variable=self.method_var, value=3)
-        self.radio3.pack()
+        self.radio3 = Radiobutton(root, text="3. Математическая библиотека (eval)", variable=self.method_var,
+                                  value=3, font=("Calibri", 12), indicatoron=0, width=40, relief=FLAT, bg="#F5E6CB",
+                                  activebackground="#E7C697", fg="#503D33")
+        self.radio3.pack(pady=5)
 
-        # Кнопка, при нажатии на которую вызывается метод process_file.
-        self.process_button = Button(root, text="Обработать файл", command=self.process_file)
-        self.process_button.pack()
+        self.process_button = Button(root, text="Обработать файл", command=self.process_file, font=("Calibri", 12),
+                                     bg="#8A6642", fg="#FDF4E3", activebackground="#6DAE81", borderwidth=0,
+                                     relief=FLAT)
+        self.process_button.pack(pady=20)
 
     def process_file(self):
         file_type = self.entry_file_type.get().strip().lower()
@@ -67,15 +72,7 @@ class FileProcessorApp:
 
 if __name__ == "__main__":
     root = Tk()
-    root.geometry("400x200+550+300") # размер + сдвиг
+    root.geometry("400x350+550+300")
     root.resizable(False, False)
     app = FileProcessorApp(root)
     root.mainloop()
-
-    '''
-    Создание главного окна: Tk() создает главное окно приложения.
-    
-    Создание экземпляра приложения: FileProcessorApp(root) инициализирует интерфейс.
-    
-    Запуск главного цикла: root.mainloop() запускает основной цикл обработки событий, 
-    что позволяет взаимодействовать с приложением.'''
