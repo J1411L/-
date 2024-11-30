@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обработка файлов</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            background-color: #FDF4E3;
+            color: #503D33;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #F5E6CB;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        input, select, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+        }
+        button {
+            background-color: #8A6642;
+            color: #FDF4E3;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #6DAE81;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Обработка файлов</h1>
+        <form id="fileForm" enctype="multipart/form-data">
+            <label for="file">Выберите файл:</label>
+            <input type="file" name="file" id="file" required>
+
+            <label for="method">Метод обработки:</label>
+            <select name="method" id="method" required>
+                <option value="1">Регулярные выражения</option>
+                <option value="2">Парсинг</option>
+                <option value="3">Математическая библиотека (eval)</option>
+            </select>
+
+            <button type="submit">Обработать</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <script>
+        document.getElementById('fileForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const response = await fetch('/process', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            const messageElement = document.getElementById('responseMessage');
+            if (result.status === 'success') {
+                messageElement.style.color = 'green';
+                messageElement.innerHTML = `<a href="${result.message}" download>Скачать обработанный файл</a>`;
+            } else {
+                messageElement.style.color = 'red';
+                messageElement.textContent = result.message;
+            }
+        });
+    </script>
+</body>
+</html>
