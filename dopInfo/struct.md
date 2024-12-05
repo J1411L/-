@@ -18,6 +18,13 @@
     │   ├── input.txt         
     │   ├── input.yaml       
     │   └── input.xml
-    │   └── input.json        # После сюда же создаются выходные файлы
+    │   └── input.json
+    ├── outputs/
+    │   ├── processed_input.txt         
+    │   ├── processed_input.yaml       
+    │   └── processed_input.xml
+    │   └── processed_input.json  
+    ├── templates/
+    │   └── index.html       
     └── main.py  
 ```
