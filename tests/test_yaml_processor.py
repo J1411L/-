@@ -9,24 +9,26 @@ class TestYAMLProcessor(unittest.TestCase):
 
     def test_process_yaml_file(self):
         input_file = 'data/input.yaml'
-        output_file = 'data/output.yaml'
+        output_file = 'outputs/processed_input.yaml'
 
         # Вызов функции обработки
-        process_yaml_file(input_file, output_file)
+        process_yaml_file(input_file, output_file, method = 3)
 
         expected_output = '''expression1:
-  with_regex: '8'
-  without_regex: '8'
+  original: '3 + 5'
+  result: '8'
+
 expression2:
-  with_regex: '4'
-  without_regex: '4'
+  original: '10 - 2 * 3'
+  result: '4'
+
 expression3:
-  with_regex: '21'
-  without_regex: '21'
+  original: '(1 + 2) * (3 + 4)'
+  result: '21'
+
 expression4:
-  with_regex: '5.0'
-  without_regex: '5.0'
-'''
+  original: '15 / (1 + 2)'
+  result: '5.0' '''
 
         with open(output_file, 'r') as f:
             output_data = f.read()

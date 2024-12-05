@@ -8,30 +8,29 @@ class TestJSONProcessor(unittest.TestCase):
 
     def test_process_json_file(self):
         input_file = 'data/input.json'
-        output_file = 'data/output.json'
+        output_file = 'outputs/processed_input.json'
 
         # Вызов функции обработки
-        process_json_file(input_file, output_file)
+        process_json_file(input_file, output_file, method = 2)
 
         expected_output = '''{
     "expression1": {
-        "with_regex": "8",
-        "without_regex": "8"
+        "original": "3 + 5",
+        "result": "8.0"
     },
     "expression2": {
-        "with_regex": "4",
-        "without_regex": "4"
+        "original": "10 - 2 * 3",
+        "result": "4.0"
     },
     "expression3": {
-        "with_regex": "21",
-        "without_regex": "21"
+        "original": "(1 + 2) * (3 + 4)",
+        "result": "21.0"
     },
     "expression4": {
-        "with_regex": "5.0",
-        "without_regex": "5.0"
+        "original": "15 / (1 + 2)",
+        "result": "5.0"
     }
-}
-'''
+}'''
 
         with open(output_file, 'r') as f:
             output_data = f.read()

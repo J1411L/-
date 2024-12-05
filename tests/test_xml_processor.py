@@ -8,18 +8,17 @@ class TestXMLProcessor(unittest.TestCase):
 
     def test_process_xml_file(self):
         input_file = 'data/input.xml'
-        output_file = 'data/output.xml'
+        output_file = 'outputs/processed_input.xml'
 
         # Вызов функции обработки
-        process_xml_file(input_file, output_file)
+        process_xml_file(input_file, output_file, method = 1)
 
         expected_output = '''<?xml version="1.0" ?>
 <calculations>
     <expression>8</expression>
     <expression>8.0</expression>
-    <final>5.0</final>
-</calculations>
-'''
+    <expression>5.0</expression>
+</calculations>'''
 
         with open(output_file, 'r') as f:
             output_data = f.read()

@@ -8,15 +8,12 @@ class TestTxtProcessor(unittest.TestCase):
 
     def test_process_txt_file(self):
         input_file = 'data/input.txt'
-        output_file = 'data/output.txt'
+        output_file = 'outputs/processed_input.txt'
 
-        # Вызов функции обработки
-        process_txt_file(input_file, output_file)
+        process_txt_file(input_file, output_file, method = 2)
 
-        expected_output = '''8.0 (with regex)
-8.0 (-)
-1 (with regex)
-1 (-)'''
+        expected_output = '''8.0
+1.0'''
 
         with open(output_file, 'r') as f:
             output_data = f.read()
