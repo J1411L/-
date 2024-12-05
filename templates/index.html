@@ -53,6 +53,7 @@
             <button type="submit">Обработать</button>
         </form>
         <p id="responseMessage"></p>
+        <a id="downloadLink" href="#" style="display: none;">Скачать обработанный файл</a>
     </div>
 
     <script>
@@ -60,19 +61,32 @@
             event.preventDefault();
 
             const formData = new FormData(this);
-            const response = await fetch('/process', {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
 
-            const messageElement = document.getElementById('responseMessage');
-            if (result.status === 'success') {
-                messageElement.style.color = 'green';
-                messageElement.innerHTML = `<a href="${result.message}" download>Скачать обработанный файл</a>`;
-            } else {
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                const messageElement = document.getElementById('responseMessage');
+                const downloadLink = document.getElementById('downloadLink');
+
+                if (result.status === 'success') {
+                    messageElement.style.color = 'green';
+                    messageElement.textContent = result.message; // Показываем сообщение об успехе
+                    downloadLink.href = result.download_url; // Устанавливаем ссылку на скачивание
+                    downloadLink.style.display = 'inline'; // Делаем ссылку видимой
+                } else {
+                    messageElement.style.color = 'red';
+                    messageElement.textContent = result.message;
+                    downloadLink.style.display = 'none'; // Скрываем ссылку в случае ошибки
+                }
+            } catch (error) {
+                const messageElement = document.getElementById('responseMessage');
                 messageElement.style.color = 'red';
-                messageElement.textContent = result.message;
+                messageElement.textContent = 'Произошла ошибка при обработке запроса.';
+                console.error('Ошибка:', error);
             }
         });
     </script>
