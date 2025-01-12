@@ -1,14 +1,16 @@
 from flask import Flask, render_template, request, jsonify
 # основная среда для веб-приложений
-# отображает HTML-шаблоны.
-# обрабатывает входящие запросы.
-# преобразует данные в формат JSON для ответов.
+# отображает HTML-шаблоны
+# обрабатывает входящие запросы
+# преобразует данные в формат JSON для ответов
 from flask import send_from_directory
 # отправляет файлы из указанного каталога.
 from werkzeug.utils import secure_filename
 # очищает имена файлов, чтобы гарантировать их безопасное использование
 import os
 # взаимодействует с операционной системой для операций с файлами и каталогами
+from mod.file_encryption import encrypt_file
+
 
 from mod.txt_processor import process_txt_file
 from mod.xml_processor import process_xml_file
@@ -23,7 +25,7 @@ OUTPUT_FOLDER = 'outputs'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# jпределяеv маршрут для загрузки обработанных файлов
+# определяем маршрут для загрузки обработанных файлов
 @app.route('/download/<filename>')
 def download_file(filename):
     try:
@@ -43,6 +45,8 @@ def process_file():
     try:
         uploaded_file = request.files['file']
         method = int(request.form['method'])
+        encrypt = request.form.get('encrypt') == '1'  # Проверяем, выбрано ли шифрование
+
 
         if uploaded_file.filename == '':
             return jsonify({'status': 'error', 'message': 'Файл не выбран.'})
@@ -65,6 +69,9 @@ def process_file():
             process_yaml_file(input_path, output_path, method)
         else:
             return jsonify({'status': 'error', 'message': 'Неподдерживаемый тип файла.'})
+
+        if encrypt:
+            output_path = encrypt_file(output_path)  # Добавьте функцию для шифрования
 
         return jsonify({'status': 'success', 'message': f'Файл успешно обработан.', 'download_url': f'/download/{os.path.basename(output_path)}'})
     except Exception as e:
