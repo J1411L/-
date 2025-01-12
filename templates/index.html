@@ -50,6 +50,10 @@
                 <option value="3">Математическая библиотека (eval)</option>
             </select>
 
+            <label>
+                <input type="checkbox" name="encrypt" value="1"> Зашифровать выходной файл
+            </label>
+
             <button type="submit">Обработать</button>
         </form>
         <p id="responseMessage"></p>
@@ -74,13 +78,13 @@
 
                 if (result.status === 'success') {
                     messageElement.style.color = 'green';
-                    messageElement.textContent = result.message; // Показываем сообщение об успехе
-                    downloadLink.href = result.download_url; // Устанавливаем ссылку на скачивание
-                    downloadLink.style.display = 'inline'; // Делаем ссылку видимой
+                    messageElement.textContent = result.message;
+                    downloadLink.href = result.download_url;
+                    downloadLink.style.display = 'inline';
                 } else {
                     messageElement.style.color = 'red';
                     messageElement.textContent = result.message;
-                    downloadLink.style.display = 'none'; // Скрываем ссылку в случае ошибки
+                    downloadLink.style.display = 'none';
                 }
             } catch (error) {
                 const messageElement = document.getElementById('responseMessage');
