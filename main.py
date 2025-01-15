@@ -9,13 +9,16 @@ from werkzeug.utils import secure_filename
 # очищает имена файлов, чтобы гарантировать их безопасное использование
 import os
 # взаимодействует с операционной системой для операций с файлами и каталогами
-from mod.file_encryption import encrypt_file
 
+from mod.file_encryption import encrypt_file
 
 from mod.txt_processor import process_txt_file
 from mod.xml_processor import process_xml_file
 from mod.json_processor import process_json_file
 from mod.yaml_processor import process_yaml_file
+
+from mod.zip_processor import extract_zip
+
 
 app = Flask(__name__)
 
@@ -57,6 +60,42 @@ def process_file():
         uploaded_file.save(input_path)
 
         file_type = filename.rsplit('.', 1)[-1].lower()
+
+        if file_type == 'zip':
+            extracted_files = extract_zip(input_path, UPLOAD_FOLDER)
+
+            if not extracted_files:
+                return jsonify({'status': 'error', 'message': 'Архив пуст.'})
+
+            # Предполагаем, что в архиве только один файл
+            file_path = extracted_files[0]
+            original_file_type = os.path.splitext(file_path)[1][1:].lower()
+            output_path = os.path.join(OUTPUT_FOLDER, os.path.basename(file_path))  # Сохраняем с оригинальным именем
+
+            try:
+                if original_file_type == 'txt':
+                    process_txt_file(file_path, output_path, method)
+                elif original_file_type == 'xml':
+                    process_xml_file(file_path, output_path, method)
+                elif original_file_type == 'json':
+                    process_json_file(file_path, output_path, method)
+                elif original_file_type == 'yaml':
+                    process_yaml_file(file_path, output_path, method)
+                else:
+                    return jsonify({'status': 'error', 'message': f'Неподдерживаемый тип файла: {original_file_type}.'})
+
+            except Exception as e:
+                return jsonify({'status': 'error', 'message': f'Ошибка при обработке {original_file_type}: {str(e)}'})
+
+            # Если требуется шифрование
+            if encrypt:
+                output_path = encrypt_file(output_path)
+
+            return jsonify({
+                'status': 'success',
+                'message': f'Файл "{os.path.basename(output_path)}" успешно обработан.',
+                'download_url': f'/download/{os.path.basename(output_path)}'
+            })
 
         # Определяем обработку
         if file_type == 'txt':
