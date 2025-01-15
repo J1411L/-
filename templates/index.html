@@ -40,7 +40,7 @@
     <div class="container">
         <h1>Обработка файлов</h1>
         <form id="fileForm" enctype="multipart/form-data">
-            <label for="file">Выберите файл:</label>
+            <label for="file">Выберите файл(txt,json,xml,yaml,zip):</label>
             <input type="file" name="file" id="file" required>
 
             <label for="method">Метод обработки:</label>
@@ -53,6 +53,10 @@
             <label>
                 <input type="checkbox" name="encrypt" value="1"> Зашифровать выходной файл
             </label>
+            <label>
+                <input type="checkbox" name="zip" value="1"> Архивировать выходной файл в ZIP
+            </label>
+
 
             <button type="submit">Обработать</button>
         </form>
