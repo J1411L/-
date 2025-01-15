@@ -17,7 +17,7 @@ from mod.xml_processor import process_xml_file
 from mod.json_processor import process_json_file
 from mod.yaml_processor import process_yaml_file
 
-from mod.zip_processor import extract_zip
+from mod.zip_processor import extract_zip, create_zip
 
 
 app = Flask(__name__)
@@ -49,7 +49,7 @@ def process_file():
         uploaded_file = request.files['file']
         method = int(request.form['method'])
         encrypt = request.form.get('encrypt') == '1'  # Проверяем, выбрано ли шифрование
-
+        zip_output = request.form.get('zip') == '1'  # Проверяем, выбрано ли архивирование
 
         if uploaded_file.filename == '':
             return jsonify({'status': 'error', 'message': 'Файл не выбран.'})
@@ -91,6 +91,10 @@ def process_file():
             if encrypt:
                 output_path = encrypt_file(output_path)
 
+            # Архивируем выходной файл, если выбрано
+            if zip_output:
+                output_path = create_zip(output_path, [output_path])
+
             return jsonify({
                 'status': 'success',
                 'message': f'Файл "{os.path.basename(output_path)}" успешно обработан.',
@@ -111,7 +115,9 @@ def process_file():
 
         if encrypt:
             output_path = encrypt_file(output_path)  # Добавьте функцию для шифрования
-
+            # Архивируем выходной файл, если выбрано
+        if zip_output:
+            output_path = create_zip(output_path, [output_path])
         return jsonify({'status': 'success', 'message': f'Файл успешно обработан.', 'download_url': f'/download/{os.path.basename(output_path)}'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
