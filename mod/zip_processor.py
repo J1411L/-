@@ -15,3 +15,10 @@ def extract_zip(input_path, output_folder):
     except Exception as e:
         print(f"Ошибка при извлечении ZIP файла: {e}")
         return []  # Возвращаем пустой список в случае других ошибок
+
+def create_zip(output_path, files):
+    zip_filename = f"{os.path.splitext(output_path)[0]}.zip"  # Создаем имя ZIP файла
+    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+        for file in files:
+            zipf.write(file, arcname=os.path.basename(file))  # Добавляем файл в ZIP
+    return zip_filename
